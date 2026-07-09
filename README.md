@@ -1,41 +1,67 @@
 # Conversor
 
-Conversor is a local desktop file converter focused on privacy, simple batch workflows, and quality-first defaults.
+Conversor é um aplicativo desktop para converter arquivos localmente, com foco em privacidade, conversões em lote e escolhas seguras de qualidade.
 
-The project targets Windows, Linux, and macOS with a native Qt/C++ desktop interface. Files are processed locally; nothing is uploaded to external services.
+O programa foi pensado para Windows, Linux e macOS usando uma interface nativa em Qt/C++. Os arquivos são processados no próprio computador; nada é enviado para serviços externos.
 
-## Goals
+## Baixar o programa
 
-- Convert audio, video, image, and document files locally.
-- Support batch conversion grouped by file category.
-- Prefer quality-preserving conversions when technically possible.
-- Warn the user when the selected target format necessarily causes quality loss.
-- Keep the interface compact and direct, inspired by tools such as Rufus.
-- Package conversion engines with the app so the user can download and use it without manual setup.
+Se você só quer usar o Conversor, baixe o executável do seu sistema:
 
-## Current Status
+| Sistema | Download direto |
+| --- | --- |
+| Windows | [Baixar instalador para Windows](https://github.com/leonfagundes/Conversor-/releases/latest/download/Conversor-Windows-x64.msi) |
+| Linux | [Baixar AppImage para Linux](https://github.com/leonfagundes/Conversor-/releases/latest/download/Conversor-Linux-x86_64.AppImage) |
+| macOS | [Baixar DMG para macOS](https://github.com/leonfagundes/Conversor-/releases/latest/download/Conversor-macOS-universal.dmg) |
+| Todos os downloads | [Abrir página de releases](https://github.com/leonfagundes/Conversor-/releases) |
 
-This repository contains the first project skeleton:
+Para esses links diretos funcionarem, publique uma release no GitHub com estes nomes de arquivo:
 
-- Pure C++ core for category detection, target format capabilities, and conversion planning.
-- CTest-based core tests.
-- Qt Widgets desktop shell that displays files, category tabs, output options, warnings, progress, and a conversion log.
-- Engine command builders for FFmpeg, ImageMagick, LibreOffice, and Pandoc.
-- Packaging notes for embedding FFmpeg, ImageMagick, LibreOffice, and Pandoc per platform.
+- `Conversor-Windows-x64.msi`
+- `Conversor-Linux-x86_64.AppImage`
+- `Conversor-macOS-universal.dmg`
 
-The desktop app first looks for packaged engines beside the executable, then falls back to executables available on the system `PATH`.
+Depois de baixar, abra o arquivo e siga o fluxo normal do seu sistema operacional.
 
-## Requirements
+## Imagens do programa
 
-For development:
+### Tela principal
 
-- CMake 3.24 or newer
-- C++20 compiler
-- Qt 6 Widgets for the desktop app
+![Tela principal do Conversor](docs/images/conversor-tela-principal.png)
 
-The core library and tests do not depend on Qt.
+### Fila de conversão
 
-## Build
+![Fila de conversão no Conversor](docs/images/conversor-fila-conversao.png)
+
+## O que o Conversor faz
+
+- Converte arquivos de áudio, vídeo, imagem e documentos.
+- Permite adicionar arquivos avulsos ou pastas inteiras.
+- Organiza a conversão por categoria de arquivo.
+- Prioriza formatos que preservam qualidade quando isso é possível.
+- Mostra avisos quando o formato escolhido pode causar perda de qualidade.
+- Segue o tema claro/escuro do sistema quando ele é detectado e permite escolher o tema dentro do programa.
+- Procura motores empacotados junto do aplicativo antes de usar programas disponíveis no `PATH`.
+
+## Estado atual do projeto
+
+Este repositório contém a primeira base do projeto:
+
+- Núcleo em C++ puro para detectar categorias, listar formatos de destino e planejar conversões.
+- Testes automatizados do núcleo com CTest.
+- Interface desktop em Qt Widgets com tabela de arquivos, abas por categoria, opções de saída, avisos, progresso e log.
+- Montadores de comandos para FFmpeg, ImageMagick, LibreOffice e Pandoc.
+- Notas de empacotamento para Windows, Linux e macOS.
+
+## Requisitos para desenvolvimento
+
+- CMake 3.24 ou mais recente
+- Compilador com suporte a C++20
+- Qt 6 Widgets para compilar o aplicativo desktop
+
+O núcleo e os testes não dependem de Qt. Se o Qt 6 Widgets não estiver instalado, o CMake ainda compila o núcleo e os testes, mas ignora o executável desktop.
+
+## Compilar localmente
 
 ```powershell
 cmake -S . -B build
@@ -43,18 +69,16 @@ cmake --build build
 ctest --test-dir build --output-on-failure
 ```
 
-If Qt 6 Widgets is not installed, CMake still builds the core library and tests, but skips the desktop executable.
-
-## Project Layout
+## Estrutura do projeto
 
 ```text
-src/core/      Pure C++ conversion planning logic
-src/app/       Qt Widgets desktop shell
-tests/         Core tests
-docs/          Product and architecture documentation
-packaging/     Platform packaging notes
+src/core/      Lógica de planejamento de conversão em C++ puro
+src/app/       Interface desktop em Qt Widgets
+tests/         Testes do núcleo
+docs/          Documentação do produto e da arquitetura
+packaging/     Notas de empacotamento por plataforma
 ```
 
-## Privacy
+## Privacidade
 
-The app is designed to run 100% locally. Conversion engines are expected to be packaged with each platform build, and the application does not require an internet connection to process files.
+O Conversor foi projetado para funcionar 100% localmente. Os motores de conversão devem ser empacotados junto de cada build, e o aplicativo não precisa de internet para processar arquivos.

@@ -3,9 +3,12 @@
 #include "core/ConversionPlan.h"
 #include "core/EngineCommand.h"
 #include "core/FormatRegistry.h"
+#include "core/ThemePreference.h"
 
+#include <QApplication>
 #include <QComboBox>
 #include <QAbstractItemView>
+#include <QColor>
 #include <QCoreApplication>
 #include <QDir>
 #include <QDirIterator>
@@ -13,12 +16,16 @@
 #include <QFileInfo>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QGuiApplication>
 #include <QHeaderView>
 #include <QLabel>
+#include <QPalette>
 #include <QPlainTextEdit>
 #include <QProgressBar>
 #include <QProcess>
 #include <QPushButton>
+#include <QSettings>
+#include <QStyleHints>
 #include <QStandardPaths>
 #include <QTableWidget>
 #include <QTabWidget>
@@ -72,6 +79,137 @@ QStringList toQStringList(const std::vector<std::string>& values)
     return result;
 }
 
+QString themeLabel(conversor::ThemePreference preference)
+{
+    switch (preference) {
+    case conversor::ThemePreference::System:
+        return "Sistema";
+    case conversor::ThemePreference::Light:
+        return "Claro";
+    case conversor::ThemePreference::Dark:
+        return "Escuro";
+    }
+
+    return "Sistema";
+}
+
+std::optional<conversor::EffectiveTheme> detectedSystemTheme()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    const auto* hints = QGuiApplication::styleHints();
+    if (hints == nullptr) {
+        return std::nullopt;
+    }
+
+    switch (hints->colorScheme()) {
+    case Qt::ColorScheme::Dark:
+        return conversor::EffectiveTheme::Dark;
+    case Qt::ColorScheme::Light:
+        return conversor::EffectiveTheme::Light;
+    case Qt::ColorScheme::Unknown:
+        return std::nullopt;
+    }
+#endif
+
+    return std::nullopt;
+}
+
+void setPaletteColors(QPalette& palette,
+                      QPalette::ColorRole role,
+                      const QColor& active,
+                      const QColor& disabled)
+{
+    palette.setColor(QPalette::Active, role, active);
+    palette.setColor(QPalette::Inactive, role, active);
+    palette.setColor(QPalette::Disabled, role, disabled);
+}
+
+QPalette lightPalette()
+{
+    QPalette palette;
+    const QColor window(246, 247, 249);
+    const QColor panel(255, 255, 255);
+    const QColor text(31, 35, 40);
+    const QColor disabledText(132, 141, 151);
+    const QColor button(239, 242, 246);
+    const QColor highlight(28, 97, 231);
+
+    palette.setColor(QPalette::Window, window);
+    palette.setColor(QPalette::Base, panel);
+    palette.setColor(QPalette::AlternateBase, QColor(241, 244, 248));
+    palette.setColor(QPalette::ToolTipBase, QColor(31, 35, 40));
+    palette.setColor(QPalette::ToolTipText, QColor(255, 255, 255));
+    palette.setColor(QPalette::Button, button);
+    palette.setColor(QPalette::BrightText, QColor(255, 255, 255));
+    palette.setColor(QPalette::Link, highlight);
+    palette.setColor(QPalette::Highlight, highlight);
+    palette.setColor(QPalette::HighlightedText, QColor(255, 255, 255));
+    palette.setColor(QPalette::PlaceholderText, QColor(108, 117, 125));
+
+    setPaletteColors(palette, QPalette::WindowText, text, disabledText);
+    setPaletteColors(palette, QPalette::Text, text, disabledText);
+    setPaletteColors(palette, QPalette::ButtonText, text, disabledText);
+
+    return palette;
+}
+
+QPalette darkPalette()
+{
+    QPalette palette;
+    const QColor window(31, 34, 38);
+    const QColor panel(22, 24, 28);
+    const QColor text(240, 243, 246);
+    const QColor disabledText(132, 141, 151);
+    const QColor button(43, 47, 54);
+    const QColor highlight(70, 130, 255);
+
+    palette.setColor(QPalette::Window, window);
+    palette.setColor(QPalette::Base, panel);
+    palette.setColor(QPalette::AlternateBase, QColor(38, 42, 48));
+    palette.setColor(QPalette::ToolTipBase, QColor(43, 47, 54));
+    palette.setColor(QPalette::ToolTipText, text);
+    palette.setColor(QPalette::Button, button);
+    palette.setColor(QPalette::BrightText, QColor(255, 255, 255));
+    palette.setColor(QPalette::Link, QColor(128, 168, 255));
+    palette.setColor(QPalette::Highlight, highlight);
+    palette.setColor(QPalette::HighlightedText, QColor(255, 255, 255));
+    palette.setColor(QPalette::PlaceholderText, QColor(154, 164, 178));
+
+    setPaletteColors(palette, QPalette::WindowText, text, disabledText);
+    setPaletteColors(palette, QPalette::Text, text, disabledText);
+    setPaletteColors(palette, QPalette::ButtonText, text, disabledText);
+
+    return palette;
+}
+
+QString darkStyleSheet()
+{
+    return R"(
+QToolTip {
+    background-color: #2b2f36;
+    border: 1px solid #596170;
+    color: #f0f3f6;
+}
+QTableWidget,
+QPlainTextEdit {
+    gridline-color: #596170;
+}
+QHeaderView::section {
+    background-color: #2b2f36;
+    border: 1px solid #596170;
+    color: #f0f3f6;
+    padding: 4px;
+}
+QTabWidget::pane {
+    border: 1px solid #596170;
+}
+QTabBar::tab:selected {
+    background-color: #4682ff;
+    color: #ffffff;
+}
+)";
+}
+
 const std::array<conversor::FileCategory, 4> visibleCategories = {
     conversor::FileCategory::Image,
     conversor::FileCategory::Audio,
@@ -87,6 +225,9 @@ MainWindow::MainWindow(QWidget* parent)
     setWindowTitle("Conversor");
     resize(860, 620);
 
+    const auto savedTheme = QSettings().value("appearance/theme", "system").toString().toStdString();
+    themePreference_ = conversor::themePreferenceFromKey(savedTheme).value_or(conversor::ThemePreference::System);
+
     const auto documents = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     outputDirectory_ = toPath(documents.isEmpty() ? QDir::homePath() : documents) / "Conversor Output";
 
@@ -100,17 +241,36 @@ MainWindow::MainWindow(QWidget* parent)
     auto* addFolderButton = new QPushButton("Adicionar pasta", central);
     auto* outputButton = new QPushButton("Pasta de saida", central);
     auto* clearButton = new QPushButton("Limpar", central);
+    auto* themeTextLabel = new QLabel("Tema", central);
+    themeCombo_ = new QComboBox(central);
+    themeCombo_->setMinimumWidth(120);
 
     summaryLabel_ = new QLabel("Nenhum arquivo carregado", central);
     outputLabel_ = new QLabel(fromPath(outputDirectory_), central);
     outputLabel_->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
+    const std::array themePreferences = {
+        conversor::ThemePreference::System,
+        conversor::ThemePreference::Light,
+        conversor::ThemePreference::Dark,
+    };
+    for (const auto preference : themePreferences) {
+        themeCombo_->addItem(
+            themeLabel(preference),
+            QString::fromStdString(conversor::themePreferenceKey(preference)));
+        if (preference == themePreference_) {
+            themeCombo_->setCurrentIndex(themeCombo_->count() - 1);
+        }
+    }
+
     topRow->addWidget(addFilesButton, 0, 0);
     topRow->addWidget(addFolderButton, 0, 1);
     topRow->addWidget(outputButton, 0, 2);
     topRow->addWidget(clearButton, 0, 3);
+    topRow->addWidget(themeTextLabel, 0, 4);
+    topRow->addWidget(themeCombo_, 0, 5);
     topRow->addWidget(summaryLabel_, 1, 0, 1, 2);
-    topRow->addWidget(outputLabel_, 1, 2, 1, 2);
+    topRow->addWidget(outputLabel_, 1, 2, 1, 4);
     topRow->setColumnStretch(2, 1);
     root->addLayout(topRow);
 
@@ -156,8 +316,64 @@ MainWindow::MainWindow(QWidget* parent)
     connect(addFolderButton, &QPushButton::clicked, this, [this] { addFolder(); });
     connect(outputButton, &QPushButton::clicked, this, [this] { chooseOutputDirectory(); });
     connect(clearButton, &QPushButton::clicked, this, [this] { clearFiles(); });
+    connect(themeCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index) {
+        const auto preference = conversor::themePreferenceFromKey(
+            themeCombo_->itemData(index).toString().toStdString());
+        if (preference.has_value()) {
+            updateThemePreference(*preference);
+        }
+    });
     connect(convertButton_, &QPushButton::clicked, this, [this] { planConversions(); });
     connect(cancelButton_, &QPushButton::clicked, this, [this] { cancelConversions(); });
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged, this, [this] {
+        if (themePreference_ == conversor::ThemePreference::System) {
+            applyTheme();
+        }
+    });
+#endif
+
+    applyTheme();
+}
+
+void MainWindow::updateThemePreference(conversor::ThemePreference preference)
+{
+    themePreference_ = preference;
+
+    QSettings settings;
+    settings.setValue(
+        "appearance/theme",
+        QString::fromStdString(conversor::themePreferenceKey(themePreference_)));
+
+    applyTheme();
+}
+
+void MainWindow::applyTheme()
+{
+    auto* app = qobject_cast<QApplication*>(QCoreApplication::instance());
+    if (app == nullptr) {
+        return;
+    }
+
+    static const QPalette nativePalette = app->palette();
+
+    const auto systemTheme = detectedSystemTheme();
+    if (themePreference_ == conversor::ThemePreference::System && !systemTheme.has_value()) {
+        app->setPalette(nativePalette);
+        app->setStyleSheet(QString());
+        return;
+    }
+
+    const auto effectiveTheme = conversor::resolveEffectiveTheme(themePreference_, systemTheme);
+    if (effectiveTheme == conversor::EffectiveTheme::Dark) {
+        app->setPalette(darkPalette());
+        app->setStyleSheet(darkStyleSheet());
+        return;
+    }
+
+    app->setPalette(lightPalette());
+    app->setStyleSheet(QString());
 }
 
 void MainWindow::configureCategoryTab(conversor::FileCategory category, QWidget* tab)

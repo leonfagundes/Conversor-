@@ -2,6 +2,7 @@
 
 #include "core/EngineCommand.h"
 #include "core/MediaFile.h"
+#include "core/ThemePreference.h"
 
 #include <QMainWindow>
 
@@ -29,6 +30,8 @@ private:
     void chooseOutputDirectory();
     void planConversions();
     void cancelConversions();
+    void updateThemePreference(conversor::ThemePreference preference);
+    void applyTheme();
     void refreshTable();
     void refreshSummary();
     void appendFile(const QString& path);
@@ -43,6 +46,7 @@ private:
     QLabel* summaryLabel_ = nullptr;
     QLabel* outputLabel_ = nullptr;
     QTabWidget* categoryTabs_ = nullptr;
+    QComboBox* themeCombo_ = nullptr;
     QProgressBar* progressBar_ = nullptr;
     QPushButton* convertButton_ = nullptr;
     QPushButton* cancelButton_ = nullptr;
@@ -52,6 +56,7 @@ private:
     std::vector<conversor::MediaFile> files_;
     std::map<conversor::FileCategory, QComboBox*> targetCombos_;
     std::map<conversor::FileCategory, QLabel*> warningLabels_;
+    conversor::ThemePreference themePreference_ = conversor::ThemePreference::System;
     QProcess* activeProcess_ = nullptr;
     bool cancelRequested_ = false;
 };
