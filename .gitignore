@@ -1,0 +1,26 @@
+# Build outputs
+build/
+cmake-build-*/
+out/
+dist/
+install/
+
+# Local IDE/editor files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.swp
+*.tmp
+
+# Generated app/runtime data
+logs/
+*.log
+
+# Local work folders
+.worktrees/
+
+# OS files
+.DS_Store
+Thumbs.db
