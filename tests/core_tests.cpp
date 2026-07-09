@@ -1,6 +1,7 @@
 #include "core/ConversionPlan.h"
 #include "core/EngineCommand.h"
 #include "core/FormatRegistry.h"
+#include "core/ThemePreference.h"
 
 #include <cstdlib>
 #include <filesystem>
@@ -199,6 +200,39 @@ void test_builds_document_commands()
     expect(markdownCommand.executableKey == "pandoc", "markup conversion should use Pandoc");
 }
 
+void test_resolves_theme_preferences()
+{
+    using conversor::EffectiveTheme;
+    using conversor::ThemePreference;
+
+    expect(conversor::resolveEffectiveTheme(ThemePreference::System, EffectiveTheme::Dark) == EffectiveTheme::Dark,
+           "system preference should follow a detected dark system theme");
+    expect(conversor::resolveEffectiveTheme(ThemePreference::System, EffectiveTheme::Light) == EffectiveTheme::Light,
+           "system preference should follow a detected light system theme");
+    expect(conversor::resolveEffectiveTheme(ThemePreference::System, std::nullopt) == EffectiveTheme::Light,
+           "system preference should fall back to light when no system theme is available");
+    expect(conversor::resolveEffectiveTheme(ThemePreference::Dark, EffectiveTheme::Light) == EffectiveTheme::Dark,
+           "manual dark preference should override the system theme");
+    expect(conversor::resolveEffectiveTheme(ThemePreference::Light, EffectiveTheme::Dark) == EffectiveTheme::Light,
+           "manual light preference should override the system theme");
+}
+
+void test_parses_theme_preference_keys()
+{
+    using conversor::ThemePreference;
+
+    expect(conversor::themePreferenceFromKey("system") == ThemePreference::System,
+           "system key should parse");
+    expect(conversor::themePreferenceFromKey("light") == ThemePreference::Light,
+           "light key should parse");
+    expect(conversor::themePreferenceFromKey("dark") == ThemePreference::Dark,
+           "dark key should parse");
+    expect(!conversor::themePreferenceFromKey("unknown").has_value(),
+           "unknown theme key should be rejected");
+    expect(conversor::themePreferenceKey(ThemePreference::Dark) == "dark",
+           "dark preference should serialize as dark");
+}
+
 } // namespace
 
 int main()
@@ -214,6 +248,8 @@ int main()
     test_builds_ffmpeg_audio_command();
     test_builds_imagemagick_command();
     test_builds_document_commands();
+    test_resolves_theme_preferences();
+    test_parses_theme_preference_keys();
 
     if (failures != 0) {
         std::cerr << failures << " test assertion(s) failed\n";

@@ -2,6 +2,7 @@ add_library(conversor_core
     core/ConversionPlan.cpp
     core/EngineCommand.cpp
     core/FormatRegistry.cpp
+    core/ThemePreference.cpp
 )
 
 target_include_directories(conversor_core
