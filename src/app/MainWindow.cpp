@@ -14,11 +14,13 @@
 #include <QDirIterator>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QFormLayout>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QGuiApplication>
 #include <QHeaderView>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPalette>
 #include <QPlainTextEdit>
 #include <QProgressBar>
@@ -127,24 +129,24 @@ void setPaletteColors(QPalette& palette,
 QPalette lightPalette()
 {
     QPalette palette;
-    const QColor window(246, 247, 249);
+    const QColor window(240, 240, 240);
     const QColor panel(255, 255, 255);
-    const QColor text(31, 35, 40);
-    const QColor disabledText(132, 141, 151);
-    const QColor button(239, 242, 246);
-    const QColor highlight(28, 97, 231);
+    const QColor text(25, 25, 25);
+    const QColor disabledText(128, 128, 128);
+    const QColor button(240, 240, 240);
+    const QColor highlight(0, 120, 215);
 
     palette.setColor(QPalette::Window, window);
     palette.setColor(QPalette::Base, panel);
-    palette.setColor(QPalette::AlternateBase, QColor(241, 244, 248));
-    palette.setColor(QPalette::ToolTipBase, QColor(31, 35, 40));
-    palette.setColor(QPalette::ToolTipText, QColor(255, 255, 255));
+    palette.setColor(QPalette::AlternateBase, QColor(247, 247, 247));
+    palette.setColor(QPalette::ToolTipBase, QColor(255, 255, 225));
+    palette.setColor(QPalette::ToolTipText, text);
     palette.setColor(QPalette::Button, button);
     palette.setColor(QPalette::BrightText, QColor(255, 255, 255));
     palette.setColor(QPalette::Link, highlight);
     palette.setColor(QPalette::Highlight, highlight);
     palette.setColor(QPalette::HighlightedText, QColor(255, 255, 255));
-    palette.setColor(QPalette::PlaceholderText, QColor(108, 117, 125));
+    palette.setColor(QPalette::PlaceholderText, QColor(96, 96, 96));
 
     setPaletteColors(palette, QPalette::WindowText, text, disabledText);
     setPaletteColors(palette, QPalette::Text, text, disabledText);
@@ -156,24 +158,24 @@ QPalette lightPalette()
 QPalette darkPalette()
 {
     QPalette palette;
-    const QColor window(31, 34, 38);
-    const QColor panel(22, 24, 28);
-    const QColor text(240, 243, 246);
-    const QColor disabledText(132, 141, 151);
-    const QColor button(43, 47, 54);
-    const QColor highlight(70, 130, 255);
+    const QColor window(32, 32, 32);
+    const QColor panel(25, 25, 25);
+    const QColor text(235, 235, 235);
+    const QColor disabledText(132, 132, 132);
+    const QColor button(45, 45, 45);
+    const QColor highlight(0, 120, 215);
 
     palette.setColor(QPalette::Window, window);
     palette.setColor(QPalette::Base, panel);
-    palette.setColor(QPalette::AlternateBase, QColor(38, 42, 48));
-    palette.setColor(QPalette::ToolTipBase, QColor(43, 47, 54));
+    palette.setColor(QPalette::AlternateBase, QColor(38, 38, 38));
+    palette.setColor(QPalette::ToolTipBase, QColor(45, 45, 45));
     palette.setColor(QPalette::ToolTipText, text);
     palette.setColor(QPalette::Button, button);
     palette.setColor(QPalette::BrightText, QColor(255, 255, 255));
-    palette.setColor(QPalette::Link, QColor(128, 168, 255));
+    palette.setColor(QPalette::Link, QColor(96, 170, 255));
     palette.setColor(QPalette::Highlight, highlight);
     palette.setColor(QPalette::HighlightedText, QColor(255, 255, 255));
-    palette.setColor(QPalette::PlaceholderText, QColor(154, 164, 178));
+    palette.setColor(QPalette::PlaceholderText, QColor(160, 160, 160));
 
     setPaletteColors(palette, QPalette::WindowText, text, disabledText);
     setPaletteColors(palette, QPalette::Text, text, disabledText);
@@ -182,30 +184,141 @@ QPalette darkPalette()
     return palette;
 }
 
-QString darkStyleSheet()
+QString classicStyleSheet(conversor::EffectiveTheme theme)
 {
-    return R"(
+    if (theme == conversor::EffectiveTheme::Dark) {
+        return R"(
 QToolTip {
-    background-color: #2b2f36;
-    border: 1px solid #596170;
-    color: #f0f3f6;
+    background-color: #2d2d2d;
+    border: 1px solid #6b6b6b;
+    color: #ebebeb;
+}
+QGroupBox {
+    border: 1px solid #6b6b6b;
+    margin-top: 10px;
+    padding: 6px 8px 8px 8px;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 8px;
+    padding: 0 4px;
+    font-weight: 600;
+}
+QLineEdit,
+QComboBox,
+QTableWidget,
+QPlainTextEdit {
+    border: 1px solid #6b6b6b;
+    background-color: #191919;
+    color: #ebebeb;
 }
 QTableWidget,
 QPlainTextEdit {
-    gridline-color: #596170;
+    gridline-color: #565656;
 }
 QHeaderView::section {
-    background-color: #2b2f36;
-    border: 1px solid #596170;
-    color: #f0f3f6;
+    background-color: #2d2d2d;
+    border: 0;
+    border-right: 1px solid #6b6b6b;
+    border-bottom: 1px solid #6b6b6b;
+    color: #ebebeb;
     padding: 4px;
 }
 QTabWidget::pane {
-    border: 1px solid #596170;
+    border: 1px solid #6b6b6b;
+    top: -1px;
+}
+QTabBar::tab {
+    background-color: #2d2d2d;
+    border: 1px solid #6b6b6b;
+    color: #ebebeb;
+    margin-right: 2px;
+    padding: 4px 18px;
 }
 QTabBar::tab:selected {
-    background-color: #4682ff;
-    color: #ffffff;
+    background-color: #191919;
+    border-bottom-color: #191919;
+}
+QProgressBar {
+    border: 1px solid #6b6b6b;
+    background-color: #191919;
+    color: #ebebeb;
+    min-height: 18px;
+    text-align: center;
+}
+QProgressBar::chunk {
+    background-color: #16833a;
+}
+QPlainTextEdit {
+    font-family: Consolas, monospace;
+}
+)";
+    }
+
+    return R"(
+QToolTip {
+    background-color: #ffffe1;
+    border: 1px solid #767676;
+    color: #191919;
+}
+QGroupBox {
+    border: 1px solid #b8b8b8;
+    margin-top: 10px;
+    padding: 6px 8px 8px 8px;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 8px;
+    padding: 0 4px;
+    font-weight: 600;
+}
+QLineEdit,
+QComboBox,
+QTableWidget,
+QPlainTextEdit {
+    border: 1px solid #b8b8b8;
+    background-color: #ffffff;
+    color: #191919;
+}
+QTableWidget,
+QPlainTextEdit {
+    gridline-color: #d6d6d6;
+}
+QHeaderView::section {
+    background-color: #f0f0f0;
+    border: 0;
+    border-right: 1px solid #b8b8b8;
+    border-bottom: 1px solid #b8b8b8;
+    color: #191919;
+    padding: 4px;
+}
+QTabWidget::pane {
+    border: 1px solid #b8b8b8;
+    top: -1px;
+}
+QTabBar::tab {
+    background-color: #f0f0f0;
+    border: 1px solid #b8b8b8;
+    color: #191919;
+    margin-right: 2px;
+    padding: 4px 18px;
+}
+QTabBar::tab:selected {
+    background-color: #ffffff;
+    border-bottom-color: #ffffff;
+}
+QProgressBar {
+    border: 1px solid #b8b8b8;
+    background-color: #ffffff;
+    color: #191919;
+    min-height: 18px;
+    text-align: center;
+}
+QProgressBar::chunk {
+    background-color: #16a34a;
+}
+QPlainTextEdit {
+    font-family: Consolas, monospace;
 }
 )";
 }
@@ -233,27 +346,56 @@ MainWindow::MainWindow(QWidget* parent)
 
     auto* central = new QWidget(this);
     auto* root = new QVBoxLayout(central);
-    root->setContentsMargins(12, 12, 12, 12);
+    root->setContentsMargins(10, 10, 10, 10);
     root->setSpacing(8);
 
-    auto* topRow = new QGridLayout();
-    auto* addFilesButton = new QPushButton("Adicionar arquivos", central);
-    auto* addFolderButton = new QPushButton("Adicionar pasta", central);
-    auto* outputButton = new QPushButton("Pasta de saida", central);
-    auto* clearButton = new QPushButton("Limpar", central);
-    auto* themeTextLabel = new QLabel("Tema", central);
-    themeCombo_ = new QComboBox(central);
-    themeCombo_->setMinimumWidth(120);
+    auto* filesGroup = new QGroupBox("Arquivos", central);
+    auto* filesLayout = new QGridLayout(filesGroup);
+    filesLayout->setContentsMargins(8, 8, 8, 8);
+    filesLayout->setSpacing(6);
 
-    summaryLabel_ = new QLabel("Nenhum arquivo carregado", central);
-    outputLabel_ = new QLabel(fromPath(outputDirectory_), central);
-    outputLabel_->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    auto* addFilesButton = new QPushButton("Adicionar arquivos...", filesGroup);
+    auto* addFolderButton = new QPushButton("Adicionar pasta...", filesGroup);
+    auto* clearButton = new QPushButton("Limpar lista", filesGroup);
+    summaryLabel_ = new QLabel("Nenhum arquivo carregado", filesGroup);
 
     const std::array themePreferences = {
         conversor::ThemePreference::System,
         conversor::ThemePreference::Light,
         conversor::ThemePreference::Dark,
     };
+
+    fileTable_ = new QTableWidget(0, 5, filesGroup);
+    fileTable_->setHorizontalHeaderLabels({"Arquivo", "Categoria", "Formato", "Tamanho", "Status"});
+    fileTable_->horizontalHeader()->setStretchLastSection(true);
+    fileTable_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    fileTable_->verticalHeader()->setVisible(false);
+    fileTable_->setAlternatingRowColors(true);
+    fileTable_->setSelectionBehavior(QAbstractItemView::SelectRows);
+    fileTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    filesLayout->addWidget(addFilesButton, 0, 0);
+    filesLayout->addWidget(addFolderButton, 0, 1);
+    filesLayout->addWidget(clearButton, 0, 2);
+    filesLayout->addWidget(summaryLabel_, 1, 0, 1, 3);
+    filesLayout->addWidget(fileTable_, 2, 0, 1, 3);
+    filesLayout->setColumnStretch(2, 1);
+    root->addWidget(filesGroup, 1);
+
+    auto* destinationGroup = new QGroupBox("Destino", central);
+    auto* destinationLayout = new QGridLayout(destinationGroup);
+    destinationLayout->setContentsMargins(8, 8, 8, 8);
+    destinationLayout->setSpacing(6);
+
+    auto* outputTextLabel = new QLabel("Pasta de saida", destinationGroup);
+    auto* outputButton = new QPushButton("Selecionar...", destinationGroup);
+    auto* themeTextLabel = new QLabel("Tema", destinationGroup);
+    outputPathEdit_ = new QLineEdit(fromPath(outputDirectory_), destinationGroup);
+    outputPathEdit_->setReadOnly(true);
+    outputPathEdit_->setMinimumWidth(320);
+    themeCombo_ = new QComboBox(destinationGroup);
+    themeCombo_->setMinimumWidth(140);
+
     for (const auto preference : themePreferences) {
         themeCombo_->addItem(
             themeLabel(preference),
@@ -263,52 +405,53 @@ MainWindow::MainWindow(QWidget* parent)
         }
     }
 
-    topRow->addWidget(addFilesButton, 0, 0);
-    topRow->addWidget(addFolderButton, 0, 1);
-    topRow->addWidget(outputButton, 0, 2);
-    topRow->addWidget(clearButton, 0, 3);
-    topRow->addWidget(themeTextLabel, 0, 4);
-    topRow->addWidget(themeCombo_, 0, 5);
-    topRow->addWidget(summaryLabel_, 1, 0, 1, 2);
-    topRow->addWidget(outputLabel_, 1, 2, 1, 4);
-    topRow->setColumnStretch(2, 1);
-    root->addLayout(topRow);
+    destinationLayout->addWidget(outputTextLabel, 0, 0);
+    destinationLayout->addWidget(outputPathEdit_, 0, 1);
+    destinationLayout->addWidget(outputButton, 0, 2);
+    destinationLayout->addWidget(themeTextLabel, 1, 0);
+    destinationLayout->addWidget(themeCombo_, 1, 1);
+    destinationLayout->setColumnStretch(1, 1);
+    root->addWidget(destinationGroup);
 
-    fileTable_ = new QTableWidget(0, 5, central);
-    fileTable_->setHorizontalHeaderLabels({"Arquivo", "Categoria", "Formato", "Tamanho", "Status"});
-    fileTable_->horizontalHeader()->setStretchLastSection(true);
-    fileTable_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    fileTable_->setSelectionBehavior(QAbstractItemView::SelectRows);
-    fileTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    root->addWidget(fileTable_, 1);
+    auto* formatGroup = new QGroupBox("Opcoes de conversao", central);
+    auto* formatLayout = new QVBoxLayout(formatGroup);
+    formatLayout->setContentsMargins(8, 8, 8, 8);
+    formatLayout->setSpacing(6);
 
-    categoryTabs_ = new QTabWidget(central);
+    categoryTabs_ = new QTabWidget(formatGroup);
     for (const auto category : visibleCategories) {
         auto* tab = new QWidget(categoryTabs_);
         configureCategoryTab(category, tab);
         categoryTabs_->addTab(tab, categoryLabel(category));
     }
-    root->addWidget(categoryTabs_);
+    formatLayout->addWidget(categoryTabs_);
+    root->addWidget(formatGroup);
 
-    auto* actionRow = new QGridLayout();
-    progressBar_ = new QProgressBar(central);
+    auto* statusGroup = new QGroupBox("Status", central);
+    auto* statusLayout = new QGridLayout(statusGroup);
+    statusLayout->setContentsMargins(8, 8, 8, 8);
+    statusLayout->setSpacing(6);
+
+    progressBar_ = new QProgressBar(statusGroup);
     progressBar_->setRange(0, 100);
     progressBar_->setValue(0);
-    convertButton_ = new QPushButton("Converter", central);
-    cancelButton_ = new QPushButton("Cancelar", central);
+    convertButton_ = new QPushButton("Converter", statusGroup);
+    cancelButton_ = new QPushButton("Cancelar", statusGroup);
+    convertButton_->setDefault(true);
     cancelButton_->setEnabled(false);
 
-    actionRow->addWidget(progressBar_, 0, 0);
-    actionRow->addWidget(convertButton_, 0, 1);
-    actionRow->addWidget(cancelButton_, 0, 2);
-    actionRow->setColumnStretch(0, 1);
-    root->addLayout(actionRow);
-
-    logView_ = new QPlainTextEdit(central);
+    logView_ = new QPlainTextEdit(statusGroup);
     logView_->setReadOnly(true);
     logView_->setMaximumBlockCount(500);
     logView_->setPlaceholderText("Log de conversao");
-    root->addWidget(logView_);
+    logView_->setMinimumHeight(92);
+
+    statusLayout->addWidget(progressBar_, 0, 0);
+    statusLayout->addWidget(convertButton_, 0, 1);
+    statusLayout->addWidget(cancelButton_, 0, 2);
+    statusLayout->addWidget(logView_, 1, 0, 1, 3);
+    statusLayout->setColumnStretch(0, 1);
+    root->addWidget(statusGroup);
 
     setCentralWidget(central);
 
@@ -361,24 +504,30 @@ void MainWindow::applyTheme()
     const auto systemTheme = detectedSystemTheme();
     if (themePreference_ == conversor::ThemePreference::System && !systemTheme.has_value()) {
         app->setPalette(nativePalette);
-        app->setStyleSheet(QString());
+        app->setStyleSheet(classicStyleSheet(conversor::EffectiveTheme::Light));
         return;
     }
 
     const auto effectiveTheme = conversor::resolveEffectiveTheme(themePreference_, systemTheme);
     if (effectiveTheme == conversor::EffectiveTheme::Dark) {
         app->setPalette(darkPalette());
-        app->setStyleSheet(darkStyleSheet());
+        app->setStyleSheet(classicStyleSheet(effectiveTheme));
         return;
     }
 
     app->setPalette(lightPalette());
-    app->setStyleSheet(QString());
+    app->setStyleSheet(classicStyleSheet(effectiveTheme));
 }
 
 void MainWindow::configureCategoryTab(conversor::FileCategory category, QWidget* tab)
 {
-    auto* layout = new QGridLayout(tab);
+    auto* layout = new QVBoxLayout(tab);
+    layout->setContentsMargins(8, 8, 8, 8);
+    layout->setSpacing(6);
+    auto* formLayout = new QFormLayout();
+    formLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    formLayout->setLabelAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+
     auto* formatLabel = new QLabel("Formato de destino", tab);
     auto* combo = new QComboBox(tab);
     auto* warning = new QLabel(tab);
@@ -401,10 +550,9 @@ void MainWindow::configureCategoryTab(conversor::FileCategory category, QWidget*
 
     connect(combo, QOverload<int>::of(&QComboBox::currentIndexChanged), tab, updateWarning);
 
-    layout->addWidget(formatLabel, 0, 0);
-    layout->addWidget(combo, 0, 1);
-    layout->addWidget(warning, 1, 0, 1, 2);
-    layout->setColumnStretch(1, 1);
+    formLayout->addRow(formatLabel, combo);
+    layout->addLayout(formLayout);
+    layout->addWidget(warning);
 
     targetCombos_[category] = combo;
     warningLabels_[category] = warning;
@@ -471,7 +619,7 @@ void MainWindow::chooseOutputDirectory()
     }
 
     outputDirectory_ = toPath(folder);
-    outputLabel_->setText(fromPath(outputDirectory_));
+    outputPathEdit_->setText(fromPath(outputDirectory_));
 }
 
 void MainWindow::refreshTable()
