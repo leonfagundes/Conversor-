@@ -252,6 +252,13 @@ QProgressBar::chunk {
 QPlainTextEdit {
     font-family: Consolas, monospace;
 }
+QPlainTextEdit#logView {
+    border: 1px solid #6b6b6b;
+    background-color: #191919;
+    color: #ebebeb;
+    selection-background-color: #005a9e;
+    selection-color: #ffffff;
+}
 )";
     }
 
@@ -319,6 +326,13 @@ QProgressBar::chunk {
 }
 QPlainTextEdit {
     font-family: Consolas, monospace;
+}
+QPlainTextEdit#logView {
+    border: 1px solid #b8b8b8;
+    background-color: #ffffff;
+    color: #191919;
+    selection-background-color: #0078d7;
+    selection-color: #ffffff;
 }
 )";
 }
@@ -441,6 +455,7 @@ MainWindow::MainWindow(QWidget* parent)
     cancelButton_->setEnabled(false);
 
     logView_ = new QPlainTextEdit(statusGroup);
+    logView_->setObjectName("logView");
     logView_->setReadOnly(true);
     logView_->setMaximumBlockCount(500);
     logView_->setPlaceholderText("Log de conversao");
