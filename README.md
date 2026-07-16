@@ -6,17 +6,17 @@ O programa foi pensado para Windows, Linux e macOS usando uma interface nativa e
 
 ## Baixar o programa
 
-Se você só quer usar o Conversor no Windows, baixe a release mais recente:
+Se você só quer usar o Conversor, baixe a release mais recente:
 
 | Sistema | Download direto |
 | --- | --- |
 | Windows | [Baixar instalador MSI](https://github.com/leonfagundes/Conversor-/releases/latest/download/Conversor-Windows-x64.msi) |
 | Windows | [Baixar pacote ZIP portátil](https://github.com/leonfagundes/Conversor-/releases/latest/download/Conversor-Windows-x64.zip) |
+| Linux | [Baixar AppImage para Linux](https://github.com/leonfagundes/Conversor-/releases/latest/download/Conversor-Linux-x86_64.AppImage) |
 | Todos os downloads | [Abrir página de releases](https://github.com/leonfagundes/Conversor-/releases) |
 
-Linux e macOS continuam planejados, mas ainda não têm artefatos publicados na release atual. Quando forem publicados, eles devem aparecer na página de releases com estes nomes:
+macOS continua planejado, mas ainda não tem artefato publicado na release atual. Quando for publicado, ele deve aparecer na página de releases com este nome:
 
-- `Conversor-Linux-x86_64.AppImage`
 - `Conversor-macOS-universal.dmg`
 
 Depois de baixar, abra o arquivo e siga o fluxo normal do seu sistema operacional.
