@@ -2,7 +2,7 @@
 
 Conversor é um aplicativo desktop para converter arquivos localmente, com foco em privacidade, conversões em lote e escolhas seguras de qualidade.
 
-O programa foi pensado para Windows, Linux e macOS usando uma interface nativa em Qt/C++. Os arquivos são processados no próprio computador; nada é enviado para serviços externos.
+O programa foi pensado para Windows, Linux e macOS usando uma interface nativa em Qt/C++. A tela principal segue um estilo clássico de utilitário desktop, com grupos de configuração, tabela de arquivos, destino, opções de conversão e status em um fluxo direto. Os arquivos são processados no próprio computador; nada é enviado para serviços externos.
 
 ## Baixar o programa
 
@@ -33,6 +33,10 @@ Depois de baixar, abra o arquivo e siga o fluxo normal do seu sistema operaciona
 
 ![Fila de conversão no Conversor](docs/images/conversor-fila-conversao.png)
 
+### Tema escuro
+
+![Tela principal do Conversor em tema escuro](docs/images/conversor-tela-principal-dark.png)
+
 ## O que o Conversor faz
 
 - Converte arquivos de áudio, vídeo, imagem e documentos.
@@ -49,7 +53,7 @@ Este repositório contém a primeira base do projeto:
 
 - Núcleo em C++ puro para detectar categorias, listar formatos de destino e planejar conversões.
 - Testes automatizados do núcleo com CTest.
-- Interface desktop em Qt Widgets com tabela de arquivos, abas por categoria, opções de saída, avisos, progresso e log.
+- Interface desktop em Qt Widgets com layout clássico em grupos, tabela de arquivos, abas por categoria, opções de saída, avisos, progresso e log.
 - Montadores de comandos para FFmpeg, ImageMagick, LibreOffice e Pandoc.
 - Notas de empacotamento para Windows, Linux e macOS.
 

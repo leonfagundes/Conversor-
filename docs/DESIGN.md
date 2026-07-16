@@ -4,7 +4,9 @@
 
 Conversor is a desktop utility for converting files without online converters, advertisements, or upload-based workflows. It is designed for users who want to add files, choose output formats, see quality implications, and convert locally.
 
-The interface should stay compact and utilitarian. The main window is modeled after a direct tool workflow: file input, grouped options, conversion action, progress, and logs.
+The interface should stay compact, classic, and utilitarian. The main window is modeled after direct desktop tools such as Rufus: file input, output destination, grouped conversion options, conversion action, progress, and logs.
+
+The frontend should avoid marketing-style surfaces, oversized spacing, decorative gradients, card-heavy layouts, and saturated accent colors. Controls should feel like a native desktop utility: group boxes, plain buttons, editable-looking fields for paths, tabbed format categories, a grid table, and restrained light/dark palettes.
 
 ## Platform
 
@@ -45,6 +47,7 @@ The Qt Widgets layer handles:
 - Presenting output format choices
 - Showing quality warnings
 - Displaying progress and logs
+- Keeping the window organized into classic desktop sections: files, destination, conversion options, and status
 
 ### Conversion Engines
 

@@ -12,6 +12,7 @@
 
 class QComboBox;
 class QLabel;
+class QLineEdit;
 class QPlainTextEdit;
 class QProgressBar;
 class QProcess;
@@ -44,7 +45,7 @@ private:
 
     QTableWidget* fileTable_ = nullptr;
     QLabel* summaryLabel_ = nullptr;
-    QLabel* outputLabel_ = nullptr;
+    QLineEdit* outputPathEdit_ = nullptr;
     QTabWidget* categoryTabs_ = nullptr;
     QComboBox* themeCombo_ = nullptr;
     QProgressBar* progressBar_ = nullptr;
